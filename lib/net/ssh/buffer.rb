@@ -81,7 +81,7 @@ module Net
       end
 
       def info
-        "ID: #{object_id}, length: #{length}, position: #{position}, available: #{available}"
+        "ID: #{object_id}, length: #{length}, position: #{position}, available: #{available}, Thread ID: #{Thread.current.object_id}"
       end
 
       # Returns the number of bytes available to be read (e.g., how many bytes
