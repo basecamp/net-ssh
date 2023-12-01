@@ -86,6 +86,7 @@ module Net
       # is called. Note that the data is _not_ sent immediately by this method!
       def enqueue(data)
         output.append(data)
+        debug { "appended #{data.size} bytes, output: #{output.info}" }
       end
 
       # Returns +true+ if there is data waiting in the output buffer, and
@@ -99,8 +100,9 @@ module Net
       def send_pending
         if output.length > 0
           sent = send(output.to_s, 0)
-          debug { "sent #{sent} bytes" }
+          debug { "sent #{sent} bytes, output: #{output.info}" }
           output.consume!(sent)
+          debug { "consumed #{sent} bytes, output: #{output.info}" }
           return sent > 0
         else
           return false

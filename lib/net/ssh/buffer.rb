@@ -80,6 +80,10 @@ module Net
         @content.length
       end
 
+      def info
+        "ID: #{object_id}, length: #{length}, position: #{position}, available: #{available}"
+      end
+
       # Returns the number of bytes available to be read (e.g., how many bytes
       # remain between the current position and the end of the buffer).
       def available
