@@ -98,14 +98,16 @@ module Net
       # Sends as much of the pending output as possible. Returns +true+ if any
       # data was sent, and +false+ otherwise.
       def send_pending
-        if output.length > 0
-          sent = send(output.to_s, 0)
-          debug { "sent #{sent} bytes, output: #{output.info}" }
-          output.consume!(sent)
-          debug { "consumed #{sent} bytes, output: #{output.info}" }
-          return sent > 0
-        else
-          return false
+        send_mutex.synchronize do
+          if output.length > 0
+            sent = send(output.to_s, 0)
+            debug { "sent #{sent} bytes, output: #{output.info}" }
+            output.consume!(sent)
+            debug { "consumed #{sent} bytes, output: #{output.info}" }
+            return sent > 0
+          else
+            return false
+          end
         end
       end
 
@@ -142,6 +144,8 @@ module Net
 
       def output; @output; end
 
+      def send_mutex; @send_mutex; end
+
       # Initializes the intput and output buffers for this object. This method
       # is called automatically when the module is mixed into an object via
       # Object#extend (see Net::SSH::BufferedIo.extended), but must be called
@@ -152,6 +156,7 @@ module Net
         @input_errors = []
         @output = Net::SSH::Buffer.new
         @output_errors = []
+        @send_mutex = Mutex.new
       end
     end
 
